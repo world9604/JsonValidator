@@ -329,6 +329,7 @@ public class ProfileValidator {
             //factory.getStrategy().setMemoization(false);
             T myPojo = factory.manufacturePojo(clazz);
             result = ValueNodeInfoUtil.getPatternInfo(myPojo);
+            Log.d(TAG, "result.size() : " + result.size());
             //writeAsFile(gson.toJson(result));
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();

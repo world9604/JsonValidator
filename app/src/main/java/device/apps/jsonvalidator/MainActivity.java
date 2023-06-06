@@ -6,6 +6,8 @@ import android.os.HandlerThread;
 import android.support.v7.app.AppCompatActivity;
 import java.io.File;
 import java.io.FileWriter;
+
+import device.apps.jsonvalidator.entity.Scan2StageEntity;
 import device.apps.jsonvalidator.validator.ProfileValidator;
 
 
@@ -27,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
                 File json = new File("/storage/emulated/0/EmkitAgent.json");
                 ProfileValidator validator = ProfileValidator.getInstance();
                 validator.setIsLogging(true);
-                //validator.validateContainerNode(json, Scan2StageEntity.class);
+                validator.validateContainerNode(json, Scan2StageEntity.class);
 
                 //validate value node
                 //validator.validateValueNode(json, Scan2StageEntity.class);

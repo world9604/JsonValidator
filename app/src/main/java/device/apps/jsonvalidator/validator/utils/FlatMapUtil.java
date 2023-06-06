@@ -27,6 +27,7 @@ public final class FlatMapUtil {
         }
 
         if (value instanceof List) {
+            result.put(key, value);
             List<?> subList = (List<?>)value;
             int i = 0;
             for (Object o : subList) {
@@ -34,6 +35,7 @@ public final class FlatMapUtil {
                 i++;
             }
         } else if (value instanceof Map) {
+            result.put(key, value);
             Map<String, Object> subMap = (Map<String, Object>) value;
             for (Map.Entry<String, Object> subEntry : subMap.entrySet()) {
                 String k = key + "/" + subEntry.getKey();
