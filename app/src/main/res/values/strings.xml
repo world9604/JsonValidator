@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">JsonSchemaValidator</string>
+    <string name="allowed_key_list_msg">[%s]</string>
+</resources>
