@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
                 //validator.validateValueNode(json, Scan2StageEntity.class);
 
                 //create constraints
-                //validator.findConstraints(Scan2StageEntity.class);
+                validator.findConstraints(Scan2StageEntity.class);
             } catch (Exception e) {
                 e.printStackTrace();
             }

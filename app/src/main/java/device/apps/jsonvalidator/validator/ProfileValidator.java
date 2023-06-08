@@ -47,6 +47,8 @@ public class ProfileValidator {
     private final String RES_AND_VALUE_SEPARATOR = "::";
     private ValidatorFactory valueNodeValidatorFactory;
     private static ProfileValidator instance;
+    private Gson gson;
+    private Type serializationType;
 
     public static ProfileValidator getInstance() {
         if (instance == null) {
@@ -60,6 +62,9 @@ public class ProfileValidator {
     }
 
     private ProfileValidator() {
+        this.gson = new Gson();
+        this.serializationType = new TypeToken<Map<String, Object>>() {
+        }.getType();
         this.valueNodeValidatorFactory = Validation.byDefaultProvider().configure().ignoreXmlConfiguration().messageInterpolator(new MessageInterpolator() {
             @Override
             public String interpolate(String messageTemplate, Context context) {
@@ -179,25 +184,19 @@ public class ProfileValidator {
         Map<String, Object> userProfileMap;
 
         if(pojo instanceof File) {
-            Gson gson = new Gson();
-            Type type = new TypeToken<Map<String, Object>>() {
-            }.getType();
             FileReader fReader = new FileReader((File) pojo);
-            userProfileMap = gson.fromJson(gson.newJsonReader(fReader), type);
+            userProfileMap = gson.fromJson(gson.newJsonReader(fReader), serializationType);
         } else {
-            ObjectMapper mapper = new ObjectMapper();
-            userProfileMap = mapper.convertValue(pojo, new TypeReference<Map<String, Object>>() {});
+            String userProfileStr = gson.toJson(pojo);
+            userProfileMap = gson.fromJson(userProfileStr, serializationType);
         }
         return FlatMapUtil.flatten(userProfileMap);
     }
 
     //java pojo → json 형태의 트리구조의 더미 데이터를 만든다.
     private <T> Map<String, Object> getDummyProfileFromPojo(Class<T> clazz) {
-        Gson gson = new Gson();
-        Type type = new TypeToken<Map<String, Object>>() {
-        }.getType();
         String dummyProfileAsJson = getDummyProfileJson(clazz);
-        Map<String, Object> dummyProfileAsMap = gson.fromJson(dummyProfileAsJson, type);
+        Map<String, Object> dummyProfileAsMap = gson.fromJson(dummyProfileAsJson, serializationType);
         return FlatMapUtil.flatten(dummyProfileAsMap);
     }
 
@@ -207,7 +206,6 @@ public class ProfileValidator {
         strategy.setDefaultNumberOfCollectionElements(1);
         //factory.getStrategy().setMemoization(false);
         T myPojo = factory.manufacturePojo(clazz);
-        Gson gson = new Gson();
         String json = gson.toJson(myPojo);
         //writeAsFile(json);
         return json;
@@ -251,7 +249,6 @@ public class ProfileValidator {
     public <T> List<ConfigResult> validateValueNode(File pojoFile, Class clazz) {
         List<ConfigResult> results = new ArrayList<>();
         try {
-            Gson gson = new Gson();
             FileReader fReader = new FileReader(pojoFile);
             Object pojo = gson.fromJson(gson.newJsonReader(fReader), clazz);
             return validateValueNodeInProfile(pojo);
@@ -322,14 +319,12 @@ public class ProfileValidator {
     public <T> Map<String, Object> findConstraints(Class<T> clazz) {
         Map<String, Object> result = new HashMap<>();
         try {
-            Gson gson = new Gson();
             PodamFactory factory = new PodamFactoryImpl();
             RandomDataProviderStrategy strategy = (RandomDataProviderStrategy) factory.getStrategy();
             strategy.setDefaultNumberOfCollectionElements(1);
             //factory.getStrategy().setMemoization(false);
             T myPojo = factory.manufacturePojo(clazz);
             result = ValueNodeInfoUtil.getPatternInfo(myPojo);
-            Log.d(TAG, "result.size() : " + result.size());
             //writeAsFile(gson.toJson(result));
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();

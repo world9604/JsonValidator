@@ -21,7 +21,7 @@ public final class FlatMapUtil {
         return result;
     }
 
-    private static Map<String, Object> subFlatten(Map<String, Object> result, String key, Object value) {
+    public static Map<String, Object> subFlatten(Map<String, Object> result, String key, Object value) {
         if (value == null) {
             return result;
         }
