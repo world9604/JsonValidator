@@ -42,8 +42,8 @@ import uk.co.jemos.podam.api.RandomDataProviderStrategy;
 public class ProfileValidator {
     private boolean isLogging = false;
     public static final String TAG = "ProfileValidator";
-    private static final String KEY_VALIDATION_FAILED = "Key Validation Failed";
-    private static final String VALUE_VALIDATION_FAILED = "Value Validation Failed";
+    private static final String KEY_VALIDATION_FAILED = "Json Key Validation";
+    private static final String VALUE_VALIDATION_FAILED = "Json Value Validation";
     private final String RES_AND_VALUE_SEPARATOR = "::";
     private ValidatorFactory valueNodeValidatorFactory;
     private static ProfileValidator instance;
@@ -175,7 +175,7 @@ public class ProfileValidator {
             result.addError("invalid input : " + invalidKey);
             results.add(result);
         }
-        printLog("Key Validation", results);
+        printLog("Json Key Validation", results);
         return results;
     }
 
@@ -282,7 +282,7 @@ public class ProfileValidator {
             result.addError("valid regular expression : " + regExpStr);
             results.add(result);
         }
-        printLog("Value Validation", results);
+        printLog("Json Value Validation", results);
         return results;
     }
 
