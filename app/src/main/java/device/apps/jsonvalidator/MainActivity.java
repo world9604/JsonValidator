@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         new Handler(t.getLooper()).post(() -> {
             try {
                 //validate container node
-                File json = new File("/storage/emulated/0/EmkitAgent.json");
+                File json = new File("/storage/emulated/0/1.json");
                 ProfileValidator validator = ProfileValidator.getInstance();
                 validator.setIsLogging(true);
                 validator.validateContainerNode(json, Scan2StageEntity.class);
@@ -35,17 +35,17 @@ public class MainActivity extends AppCompatActivity {
                 //validator.validateValueNode(json, Scan2StageEntity.class);
 
                 //create constraints
-                validator.findConstraints(Scan2StageEntity.class);
+                //validator.findConstraints(Scan2StageEntity.class);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
     }
 
-    private void writeAsFile(String data) {
-        String jsonPath = "/storage/emulated/0/";
+    private void writeAsFile(String fileName, String data) {
+        String jsonPath = "/storage/emulated/0/" + fileName;
         FileWriter fWriter;
-        File file = new File(jsonPath + "emkitagent_result.json");
+        File file = new File(jsonPath + "_data.json");
         try {
             fWriter = new FileWriter(file);
             fWriter.write(data);

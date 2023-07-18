@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
@@ -19,6 +20,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -34,6 +36,7 @@ import javax.validation.ValidatorFactory;
 import device.apps.jsonvalidator.R;
 import device.apps.jsonvalidator.entity.ConfigResult;
 import device.apps.jsonvalidator.validator.utils.FlatMapUtil;
+import device.apps.jsonvalidator.validator.utils.FlatMapUtil2;
 import device.apps.jsonvalidator.validator.utils.ValueNodeInfoUtil;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
@@ -99,11 +102,11 @@ public class ProfileValidator {
      * 4. 대조군, 실험군을 비교하여, 실험군에만 존재하는 키들을 찾아낸다.
      *
      * @param
-     * <T> pojo : 제네릭 타입으로 원하는 pojo를 입력해도 되고, File 타입 형태가 입력된다면, json 파일로
+     * <T> pojo : 제네릭 타입으로 원하는 pojo를 입력해도 되고, File 타입 형태가 입력 된다면, json 파일로
      * 생각하고, File path로 부터 파일을 읽어와 파싱한다.
      *
      * @return
-     * ConfigResult {result : "Fail", name : "Key Validation Failed", errors : ["invalid input : {잘못된 입력값}", "{기타 메세지}"]}
+     * ConfigResult {result : "Fail", name : "Json Key Validation", errors : ["invalid input : {잘못된 입력값}", "{기타 메세지}"]}
      * 유효성 검사를 모두 통과했다면, 길이가 0인 List<ConfigReulst>를 반환한다.
      *
      * @예시1
@@ -144,7 +147,7 @@ public class ProfileValidator {
     public <T, G> List<ConfigResult> validateContainerNode(T pojo, Class<G> clazz) {
         List<ConfigResult> results = new ArrayList<>();
         try {
-            results = validateContainerNodeInProfile(pojo, clazz);
+            results = validateContainerNodeInProfile2(pojo, clazz);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             addException(results, e);
@@ -164,18 +167,53 @@ public class ProfileValidator {
         results.add(result);
     }
 
+    private <T,G> List<ConfigResult> validateContainerNodeInProfile2(T pojo, Class<G> clazz) throws FileNotFoundException {
+        Set<String> lefts = getUserProfile2(pojo);
+        Set<String> rights = getDummyProfileFromPojo2(clazz);
+        Set<String> diff = entriesOnlyOnLeft(lefts, rights);
+        List<ConfigResult> results = new ArrayList<>();
+        for (String invalidKey : diff) {
+            ConfigResult result = new ConfigResult(KEY_VALIDATION_FAILED);
+            result.addError("invalid input : " + invalidKey);
+            results.add(result);
+        }
+        printLog(KEY_VALIDATION_FAILED, results);
+        return results;
+    }
+
+    private Set<String> entriesOnlyOnLeft(Set<String> lefts, Set<String> rights) {
+        Set<String> diff = new HashSet<>();
+        for (String left : lefts) {
+            boolean hasLeftInRight = false;
+            for (String right : rights) {
+                if (left.equals(right)) {
+                    hasLeftInRight = true;
+                    break;
+                }
+            }
+            if (!hasLeftInRight) diff.add(left);
+        }
+        return diff;
+    }
+
     private <T,G> List<ConfigResult> validateContainerNodeInProfile(T pojo, Class<G> clazz) throws FileNotFoundException {
         Map<String, Object> userProfileFlatMap = getUserProfile(pojo);
+        writeAsFile("lefts_ori", gson.toJson(userProfileFlatMap));
+
         Map<String, Object> dummyProfileAsFlatMap = getDummyProfileFromPojo(clazz);
+        writeAsFile("rights_ori", gson.toJson(userProfileFlatMap));
+
         MapDifference<String, Object> difference = Maps.difference(userProfileFlatMap, dummyProfileAsFlatMap);
         Map<String, Object> diff = difference.entriesOnlyOnLeft();
+        writeAsFile("diff_ori", gson.toJson(diff));
+
         List<ConfigResult> results = new ArrayList<>();
         for (String invalidKey : diff.keySet()) {
             ConfigResult result = new ConfigResult(KEY_VALIDATION_FAILED);
             result.addError("invalid input : " + invalidKey);
             results.add(result);
         }
-        printLog("Json Key Validation", results);
+        printLog(KEY_VALIDATION_FAILED, results);
         return results;
     }
 
@@ -193,11 +231,31 @@ public class ProfileValidator {
         return FlatMapUtil.flatten(userProfileMap);
     }
 
+    @NonNull
+    private <T> Set<String> getUserProfile2(T pojo) throws FileNotFoundException{
+        Map<String, Object> userProfileMap;
+
+        if(pojo instanceof File) {
+            FileReader fReader = new FileReader((File) pojo);
+            userProfileMap = gson.fromJson(gson.newJsonReader(fReader), serializationType);
+        } else {
+            String userProfileStr = gson.toJson(pojo);
+            userProfileMap = gson.fromJson(userProfileStr, serializationType);
+        }
+        return FlatMapUtil2.flatten(userProfileMap);
+    }
+
     //java pojo → json 형태의 트리구조의 더미 데이터를 만든다.
     private <T> Map<String, Object> getDummyProfileFromPojo(Class<T> clazz) {
         String dummyProfileAsJson = getDummyProfileJson(clazz);
         Map<String, Object> dummyProfileAsMap = gson.fromJson(dummyProfileAsJson, serializationType);
         return FlatMapUtil.flatten(dummyProfileAsMap);
+    }
+
+    private <T> Set<String> getDummyProfileFromPojo2(Class<T> clazz) {
+        String dummyProfileAsJson = getDummyProfileJson(clazz);
+        Map<String, Object> dummyProfileAsMap = gson.fromJson(dummyProfileAsJson, serializationType);
+        return FlatMapUtil2.flatten(dummyProfileAsMap);
     }
 
     private <T> String getDummyProfileJson(Class<T> clazz) {
@@ -223,7 +281,7 @@ public class ProfileValidator {
      * - @Valid : 이 어노테이션을 사용하여 String 이외에 Reference type에 대하여 유효성 검사를 보장한다.
      *
      * @return
-     * ConfigReulst {result : "Fail", name : "Value Validation Failed", errors : ["key name : {key name}", "invalid input : {잘못된 입력값}", "{유효한 옵션 목록}", "{유효한 정규표현식}", "{기타 메세지}"]}
+     * ConfigReulst {result : "Fail", name : "Json Value Validation", errors : ["key name : {key name}", "invalid input : {잘못된 입력값}", "{유효한 옵션 목록}", "{유효한 정규표현식}", "{기타 메세지}"]}
      * 유효성 검사를 모두 통과했다면, 길이가 0인 List<ConfigReulst>를 반환한다.
      *
      * @용어
@@ -282,7 +340,7 @@ public class ProfileValidator {
             result.addError("valid regular expression : " + regExpStr);
             results.add(result);
         }
-        printLog("Json Value Validation", results);
+        printLog(VALUE_VALIDATION_FAILED, results);
         return results;
     }
 
@@ -334,10 +392,10 @@ public class ProfileValidator {
         return result;
     }
 
-    private void writeAsFile(String data) {
-        String jsonPath = "/storage/emulated/0/";
+    private void writeAsFile(String fileNamePrefix, String data) {
+        String jsonPath = "/storage/emulated/0/" + fileNamePrefix;
         FileWriter fWriter;
-        File file = new File(jsonPath + "dummy_data.json");
+        File file = new File(jsonPath + "_data.json");
         try {
             fWriter = new FileWriter(file);
             fWriter.write(data);
