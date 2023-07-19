@@ -1,5 +1,7 @@
 package device.apps.jsonvalidator.entity;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.Expose;
 
 import java.util.ArrayList;
@@ -49,5 +51,23 @@ public class ConfigResult {
 
     public boolean isSuccessful() {
         return result.equals("Success");
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("name : %s, result : %s",
+                name == null ? "null" : name,
+                result));
+
+        if (errors == null) return sb.toString();
+
+        for (String error : errors) {
+            sb.append(System.getProperty("line.separator"));
+            sb.append(String.format("error : %s", error));
+        }
+
+        return sb.toString();
     }
 }

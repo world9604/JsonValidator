@@ -68,6 +68,7 @@ public class ProfileValidator {
         this.gson = new Gson();
         this.serializationType = new TypeToken<Map<String, Object>>() {
         }.getType();
+
         this.valueNodeValidatorFactory = Validation.byDefaultProvider().configure().ignoreXmlConfiguration().messageInterpolator(new MessageInterpolator() {
             @Override
             public String interpolate(String messageTemplate, Context context) {
@@ -96,33 +97,35 @@ public class ProfileValidator {
 
     /**
      * @진행순서
-     * 1. 위 구조는 다음과 같이 표현된다 : ("/phone_config/listPhoneConfig/0/apn_bearer/0/" -> "2ybGKvmbtP")
-     * 2. 대조군 : 미리 정의된 json 키들(EmkitAgent의 모든 속성값, dummyProfile)을 위와 같은 형태로 만든다.
-     * 3. 실험군 : 사용자가 작성한 json(예 : EmkitAgent.json) 키들도 위와 같은 형태로 만든다.
-     * 4. 대조군, 실험군을 비교하여, 실험군에만 존재하는 키들을 찾아낸다.
+     * <p>1. 위 구조는 다음과 같이 표현된다 : ("/phone_config/listPhoneConfig/apn_bearer/" -> "2ybGKvmbtP")</p>
+     * <p>2. 대조군 : 미리 정의된 json 키들(EmkitAgent의 모든 속성값, dummyProfile)을 위와 같은 형태로 만든다.</p>
+     * <p>3. 실험군 : 사용자가 작성한 json(예 : EmkitAgent.json) 키들도 위와 같은 형태로 만든다.</p>
+     * <p>4. 대조군, 실험군을 비교하여, 실험군에만 존재하는 키들을 찾아낸다.</p>
      *
      * @param
+     * <p>
      * <T> pojo : 제네릭 타입으로 원하는 pojo를 입력해도 되고, File 타입 형태가 입력 된다면, json 파일로
      * 생각하고, File path로 부터 파일을 읽어와 파싱한다.
+     * </p>
      *
      * @return
-     * ConfigResult {result : "Fail", name : "Json Key Validation", errors : ["invalid input : {잘못된 입력값}", "{기타 메세지}"]}
-     * 유효성 검사를 모두 통과했다면, 길이가 0인 List<ConfigReulst>를 반환한다.
+     * <p>ConfigResult {result : "Fail", name : "Json Key Validation", errors : ["invalid input : {잘못된 입력값}", "{기타 메세지}"]}</p>
+     * <p>유효성 검사를 모두 통과했다면, 길이가 0인 List<ConfigReulst>를 반환한다.</p>
      *
-     * @예시4
-     * /z"button_config"/btn_app_switch
-     * 위와 같이 key name의 큰따음표 밖에 오타가 있는 경우도 잡아낸다.
+     * @예시1
+     * <p>위와 같이 key name의 큰따음표 밖에 오타가 있는 경우도 잡아낸다.</p>
+     * <p>/z"button_config"/btn_app_switch</p>
      *
-     * @예시5
-     * /eminstall_config/JobList/0/extraStr/0
-     * /eminstall_config/jobList/0/extraStr/0
-     * 대소문자를 구분한다.
+     * @예시2
+     * <p>대소문자를 구분한다.</p>
+     * <p>/eminstall_config/JobList/0/extraStr/0</p>
+     * <p>/eminstall_config/jobList/0/extraStr/0</p>
      *
      * @용어
-     * - dummyProfile : entity 패키지 > java pojo로 부터 만들어낸 json 구조의 더미 데이터를 의미한다.
-     * - Container Node : json(tree)구조에서 leaf 노드가 아닌 노드를 의미한다.
-     * - Value Node : json(tree)구조에서 leaf 노드를 의미한다.
-     * - userProfile : 예를들어, EmkitAgent.json 같은것들이다.
+     * <p>1. dummyProfile : entity 패키지 > java pojo로 부터 만들어낸 json 구조의 더미 데이터를 의미한다.</p>
+     * <p>2. Container Node : json(tree)구조에서 leaf 노드가 아닌 노드를 의미한다.</p>
+     * <p>3. Value Node : json(tree)구조에서 leaf 노드를 의미한다.</p>
+     * <p>4. userProfile : 예를들어, EmkitAgent.json 같은것들이다.</p>
      */
     public <T, G> List<ConfigResult> validateContainerNode(T pojo, Class<G> clazz) {
         List<ConfigResult> results = new ArrayList<>();

@@ -29,7 +29,6 @@ public class ScannerEntity {
     @SerializedName("scanner_reg")
     private String scanner_reg;
 
-    @PodamCollection(nbrElements = 3)
     @Expose
     @SerializedName("settingsList")
     private ArrayList<String> settingsList;
