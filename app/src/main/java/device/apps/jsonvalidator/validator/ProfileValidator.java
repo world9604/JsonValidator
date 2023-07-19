@@ -152,11 +152,11 @@ public class ProfileValidator {
 
     private <T,G> List<ConfigResult> validateContainerNodeInProfile(T pojo, Class<G> clazz) throws FileNotFoundException {
         Set<String> lefts = getUserProfile(pojo);
-        //writeAsFile("lefts", lefts.toString());
+        writeAsFile("lefts", lefts.toString());
         Set<String> rights = getDummyProfileFromPojo(clazz);
-        //writeAsFile("rights", rights.toString());
+        writeAsFile("rights", rights.toString());
         Set<String> diff = entriesOnlyOnLeft(lefts, rights);
-        //writeAsFile("diff", diff.toString());
+        writeAsFile("diff", diff.toString());
         List<ConfigResult> results = new ArrayList<>();
         for (String invalidKey : diff) {
             ConfigResult result = new ConfigResult(KEY_VALIDATION_FAILED);
@@ -222,7 +222,6 @@ public class ProfileValidator {
      * @사용법
      * - @Pattern : regexp 속성에 정규표현식을 입력, 이 어노테이션을 사용했다면 @PodamStringValue을 입력 해야한다.
      * - @FirstElementPattern : pojo의 필드가 List 형태라면, 첫번째 요소의 대해서만 정규표현식을 검사한다.
-     * - @FirstElementPattern을 사용했다면, @PodamCollection(nbrElements = 2)을 넣어줘야, 키 검사를 정확히 한다.
      * - @Valid : 이 어노테이션을 사용하여 String 이외에 Reference type에 대하여 유효성 검사를 보장한다.
      *
      * @return
@@ -328,7 +327,7 @@ public class ProfileValidator {
             //factory.getStrategy().setMemoization(false);
             T myPojo = factory.manufacturePojo(clazz);
             result = ValueNodeInfoUtil.getPatternInfo(myPojo);
-            //writeAsFile(gson.toJson(result));
+            writeAsFile("reg", gson.toJson(result));
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         } catch (Exception e) {

@@ -1,21 +1,11 @@
 package device.apps.jsonvalidator;
 
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
-import static org.junit.Assert.assertTrue;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.function.Predicate;
-
 import device.apps.jsonvalidator.entity.ConfigResult;
 import device.apps.jsonvalidator.entity.Scan2StageEntity;
 import device.apps.jsonvalidator.validator.ProfileValidator;
@@ -32,7 +22,7 @@ public class ProfileValidatorTest {
     }
 
     @Test
-    public void existingAndNonExistingKeysInArray_validateContainerNode_test() {
+    public void existingAndNonExistingKeysInArray_validateContainerNode_test_1() {
         json = new File("/storage/emulated/0/1.json");
 
         //{result : "Fail", name : "Json Key Validation", errors : ["invalid input : {잘못된 입력값}", "{기타 메세지}"]}
@@ -64,7 +54,7 @@ public class ProfileValidatorTest {
     }
 
     @Test
-    public void CaseSensitive_validateContainerNode_test() {
+    public void caseSensitive_validateContainerNode_test_2() {
         json = new File("/storage/emulated/0/2.json");
 
         //{result : "Fail", name : "Json Key Validation", errors : ["invalid input : {잘못된 입력값}", "{기타 메세지}"]}
@@ -91,7 +81,7 @@ public class ProfileValidatorTest {
     }
 
     @Test
-    public void NonExistingKeysInArray_validateContainerNode_test() {
+    public void nonExistingKeysInArray_validateContainerNode_test_3() {
         json = new File("/storage/emulated/0/3.json");
 
         //{result : "Fail", name : "Json Key Validation", errors : ["invalid input : {잘못된 입력값}", "{기타 메세지}"]}
@@ -131,5 +121,28 @@ public class ProfileValidatorTest {
 
             return passNameTest & passResultTest & passErrorTest;
         }));
+    }
+
+    @Test
+    public void buttonEntity_validateContainerNode_test_4() {
+        json = new File("/storage/emulated/0/4.json");
+
+        //{result : "Fail", name : "Json Key Validation", errors : ["invalid input : {잘못된 입력값}", "{기타 메세지}"]}
+        List<ConfigResult> actual = validator.validateContainerNode(json, Scan2StageEntity.class);
+        assertTrue(actual.size() == 0);
+    }
+
+    @Test
+    public void dateTimeEntity_validateContainerNode_test_5() {
+        json = new File("/storage/emulated/0/5.json");
+
+        //{result : "Fail", name : "Json Key Validation", errors : ["invalid input : {잘못된 입력값}", "{기타 메세지}"]}
+        List<ConfigResult> actual = validator.validateContainerNode(json, Scan2StageEntity.class);
+        assertTrue(actual.size() == 0);
+    }
+
+    @Test
+    public void findConstraints_test_6() {
+        validator.findConstraints(Scan2StageEntity.class);
     }
 }

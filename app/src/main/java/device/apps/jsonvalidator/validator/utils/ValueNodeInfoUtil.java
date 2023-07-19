@@ -37,10 +37,9 @@ public final class ValueNodeInfoUtil {
 
         if (o instanceof List) {
             List<?> subList = (List<?>) o;
-            int i = 0;
             for (Object subObject : subList) {
-                subFlatten(result, path + "/" + i, subObject);
-                i++;
+                //subFlatten(result, path + "/" + i, subObject);
+                subFlatten(result, path, subObject);
             }
         } else {
             Class c = o.getClass();

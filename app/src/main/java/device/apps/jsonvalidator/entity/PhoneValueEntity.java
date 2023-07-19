@@ -93,13 +93,13 @@ public class PhoneValueEntity
     @SerializedName("apn_apn_enable")
     private String apn_apn_enable;
 
-    @PodamCollection(nbrElements = 3)
+    //@PodamCollection(nbrElements = 3)
     @Expose
     @SerializedName("apn_bearer")
     private ArrayList<String> apn_bearer;
 
     // START: VoLTE support; added by noah.ahn 20190730
-    @PodamCollection(nbrElements = 3)
+    //@PodamCollection(nbrElements = 3)
     @Expose
     @SerializedName("volte_enable")
     private ArrayList<String> volte_enable;

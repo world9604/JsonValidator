@@ -57,7 +57,7 @@ public class JobEntity {
     @SerializedName("delayTime")
     private String delayTime;
 
-    @PodamCollection(nbrElements = 3)
+    //@PodamCollection(nbrElements = 3)
     @Expose
     @SerializedName("extraStr")
     private ArrayList<String> extraStr;

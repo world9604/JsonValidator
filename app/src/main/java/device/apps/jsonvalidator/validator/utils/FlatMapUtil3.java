@@ -1,14 +1,21 @@
 package device.apps.jsonvalidator.validator.utils;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public final class FlatMapUtil2 {
+import javax.validation.constraints.Pattern;
 
-    private FlatMapUtil2() {
+import device.apps.jsonvalidator.validator.pattern.FirstElementPattern;
+
+public final class FlatMapUtil3 {
+
+    private FlatMapUtil3() {
         throw new AssertionError("No instances for you!");
     }
 
@@ -48,5 +55,26 @@ public final class FlatMapUtil2 {
         }
 
         return result;
+    }
+
+    private static void putResult(Map<String, Object> result, String path, Field f) {
+        Map<String, String> p = new HashMap<>();
+        String regexp = "";
+        if (f.getAnnotation(Pattern.class) != null) {
+            regexp = f.getAnnotation(Pattern.class).regexp();
+
+        } else if (f.getAnnotation(FirstElementPattern.class) != null) {
+            regexp = f.getAnnotation(FirstElementPattern.class).pattern();
+        }
+        p.put("regular expression", regexp);
+        result.put(path, p);
+    }
+
+    private static String getSerializedName(Field f) {
+        SerializedName serializedName = f.getAnnotation(SerializedName.class);
+        if (serializedName != null) {
+            return serializedName.value();
+        }
+        return f.getName();
     }
 }

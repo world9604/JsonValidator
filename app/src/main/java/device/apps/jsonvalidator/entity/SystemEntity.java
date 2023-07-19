@@ -216,12 +216,12 @@ public class SystemEntity {
     @SerializedName("disable_notification_pulldown")
     private String disable_notification_pulldown;
 
-    @PodamCollection(nbrElements = 3)
+    //@PodamCollection(nbrElements = 3)
     @Expose
     @SerializedName("activitymanager_Whitelist")
     private ArrayList<String> activitymanager_Whitelist;
 
-    @PodamCollection(nbrElements = 3)
+    //@PodamCollection(nbrElements = 3)
     @Expose
     @SerializedName("battery_Whitelist")
     private ArrayList<String> battery_Whitelist;
