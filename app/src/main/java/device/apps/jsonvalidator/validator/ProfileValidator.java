@@ -109,26 +109,6 @@ public class ProfileValidator {
      * ConfigResult {result : "Fail", name : "Json Key Validation", errors : ["invalid input : {잘못된 입력값}", "{기타 메세지}"]}
      * 유효성 검사를 모두 통과했다면, 길이가 0인 List<ConfigReulst>를 반환한다.
      *
-     * @예시1
-     * 아래 두 키는 다르다.
-     * /eminstall_config/JobList/0/downloadUrl
-     * /eminstall_config/JobList/0/download
-     *
-     * @예시2
-     * 아래 두 키는 다르다.
-     * /eminstall_config/JobList/0/downloadUrl
-     * /gmsPackage_config/gmspackage_info/0/downloadUrl
-     *
-     * @예시3
-     * 아래 두 키는 다르다.
-     * /eminstall_config/JobList/0/extraStr/0
-     * /eminstall_config/JobList/0/extraStr/1
-     * 배열의 경우, 배열의 갯수가 다르면 다른 키로 인식한다.
-     * 더미 데이터 중, 배열의 더미 갯수가 더 많으면, 정확히 검사한다.
-     * 따라서, 더미 데이터의 @PodamCollection(nbrElements = 3)
-     * 어노테이션으로 최대 길이를 입력하여 예방 가능하다.
-     * 또는, @FirstElementPattern을 사용했다면, @PodamCollection(nbrElements = 2)을 넣어줘야, 키 검사를 정확히 한다.
-     *
      * @예시4
      * /z"button_config"/btn_app_switch
      * 위와 같이 key name의 큰따음표 밖에 오타가 있는 경우도 잡아낸다.
@@ -147,7 +127,7 @@ public class ProfileValidator {
     public <T, G> List<ConfigResult> validateContainerNode(T pojo, Class<G> clazz) {
         List<ConfigResult> results = new ArrayList<>();
         try {
-            results = validateContainerNodeInProfile2(pojo, clazz);
+            results = validateContainerNodeInProfile(pojo, clazz);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             addException(results, e);
@@ -167,10 +147,13 @@ public class ProfileValidator {
         results.add(result);
     }
 
-    private <T,G> List<ConfigResult> validateContainerNodeInProfile2(T pojo, Class<G> clazz) throws FileNotFoundException {
-        Set<String> lefts = getUserProfile2(pojo);
-        Set<String> rights = getDummyProfileFromPojo2(clazz);
+    private <T,G> List<ConfigResult> validateContainerNodeInProfile(T pojo, Class<G> clazz) throws FileNotFoundException {
+        Set<String> lefts = getUserProfile(pojo);
+        //writeAsFile("lefts", lefts.toString());
+        Set<String> rights = getDummyProfileFromPojo(clazz);
+        //writeAsFile("rights", rights.toString());
         Set<String> diff = entriesOnlyOnLeft(lefts, rights);
+        //writeAsFile("diff", diff.toString());
         List<ConfigResult> results = new ArrayList<>();
         for (String invalidKey : diff) {
             ConfigResult result = new ConfigResult(KEY_VALIDATION_FAILED);
@@ -196,43 +179,8 @@ public class ProfileValidator {
         return diff;
     }
 
-    private <T,G> List<ConfigResult> validateContainerNodeInProfile(T pojo, Class<G> clazz) throws FileNotFoundException {
-        Map<String, Object> userProfileFlatMap = getUserProfile(pojo);
-        writeAsFile("lefts_ori", gson.toJson(userProfileFlatMap));
-
-        Map<String, Object> dummyProfileAsFlatMap = getDummyProfileFromPojo(clazz);
-        writeAsFile("rights_ori", gson.toJson(userProfileFlatMap));
-
-        MapDifference<String, Object> difference = Maps.difference(userProfileFlatMap, dummyProfileAsFlatMap);
-        Map<String, Object> diff = difference.entriesOnlyOnLeft();
-        writeAsFile("diff_ori", gson.toJson(diff));
-
-        List<ConfigResult> results = new ArrayList<>();
-        for (String invalidKey : diff.keySet()) {
-            ConfigResult result = new ConfigResult(KEY_VALIDATION_FAILED);
-            result.addError("invalid input : " + invalidKey);
-            results.add(result);
-        }
-        printLog(KEY_VALIDATION_FAILED, results);
-        return results;
-    }
-
     @NonNull
-    private <T> Map<String, Object> getUserProfile(T pojo) throws FileNotFoundException{
-        Map<String, Object> userProfileMap;
-
-        if(pojo instanceof File) {
-            FileReader fReader = new FileReader((File) pojo);
-            userProfileMap = gson.fromJson(gson.newJsonReader(fReader), serializationType);
-        } else {
-            String userProfileStr = gson.toJson(pojo);
-            userProfileMap = gson.fromJson(userProfileStr, serializationType);
-        }
-        return FlatMapUtil.flatten(userProfileMap);
-    }
-
-    @NonNull
-    private <T> Set<String> getUserProfile2(T pojo) throws FileNotFoundException{
+    private <T> Set<String> getUserProfile(T pojo) throws FileNotFoundException{
         Map<String, Object> userProfileMap;
 
         if(pojo instanceof File) {
@@ -245,14 +193,8 @@ public class ProfileValidator {
         return FlatMapUtil2.flatten(userProfileMap);
     }
 
-    //java pojo → json 형태의 트리구조의 더미 데이터를 만든다.
-    private <T> Map<String, Object> getDummyProfileFromPojo(Class<T> clazz) {
-        String dummyProfileAsJson = getDummyProfileJson(clazz);
-        Map<String, Object> dummyProfileAsMap = gson.fromJson(dummyProfileAsJson, serializationType);
-        return FlatMapUtil.flatten(dummyProfileAsMap);
-    }
 
-    private <T> Set<String> getDummyProfileFromPojo2(Class<T> clazz) {
+    private <T> Set<String> getDummyProfileFromPojo(Class<T> clazz) {
         String dummyProfileAsJson = getDummyProfileJson(clazz);
         Map<String, Object> dummyProfileAsMap = gson.fromJson(dummyProfileAsJson, serializationType);
         return FlatMapUtil2.flatten(dummyProfileAsMap);
