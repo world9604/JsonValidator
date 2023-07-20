@@ -1,8 +1,9 @@
 package device.apps.jsonvalidator.validator.utils;
 
-import java.util.LinkedHashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public final class FlatMapUtil {
 
@@ -10,8 +11,8 @@ public final class FlatMapUtil {
         throw new AssertionError("No instances for you!");
     }
 
-    public static LinkedHashMap<String, Object> flatten(Map<String, Object> map) {
-        LinkedHashMap<String, Object> result = new LinkedHashMap<>();
+    public static Set<String> flatten(Map<String, Object> map) {
+        Set<String> result = new HashSet<>();
         if (map == null) return result;
         for (Map.Entry<String, Object> subEntry : map.entrySet()) {
             String k = subEntry.getKey();
@@ -21,21 +22,19 @@ public final class FlatMapUtil {
         return result;
     }
 
-    public static Map<String, Object> subFlatten(Map<String, Object> result, String key, Object value) {
+    public static Set<String> subFlatten(Set<String> result, String key, Object value) {
         if (value == null) {
             return result;
         }
 
         if (value instanceof List) {
-            result.put(key, value);
+            result.add(key);
             List<?> subList = (List<?>)value;
-            int i = 0;
             for (Object o : subList) {
-                subFlatten(result, key + "/" + i, subList.get(i));
-                i++;
+                subFlatten(result, key, o);
             }
         } else if (value instanceof Map) {
-            result.put(key, value);
+            result.add(key);
             Map<String, Object> subMap = (Map<String, Object>) value;
             for (Map.Entry<String, Object> subEntry : subMap.entrySet()) {
                 String k = key + "/" + subEntry.getKey();
@@ -44,7 +43,7 @@ public final class FlatMapUtil {
             }
         } else {
             //When value instanceof String, Boolean, Double, Integer
-            result.put(key, value);
+            result.add(key);
         }
 
         return result;

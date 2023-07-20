@@ -3,11 +3,6 @@ package device.apps.jsonvalidator.validator;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
-import com.google.common.collect.MapDifference;
-import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
@@ -36,7 +31,6 @@ import javax.validation.ValidatorFactory;
 import device.apps.jsonvalidator.R;
 import device.apps.jsonvalidator.entity.ConfigResult;
 import device.apps.jsonvalidator.validator.utils.FlatMapUtil;
-import device.apps.jsonvalidator.validator.utils.FlatMapUtil2;
 import device.apps.jsonvalidator.validator.utils.ValueNodeInfoUtil;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
@@ -152,11 +146,8 @@ public class ProfileValidator {
 
     private <T,G> List<ConfigResult> validateContainerNodeInProfile(T pojo, Class<G> clazz) throws FileNotFoundException {
         Set<String> lefts = getUserProfile(pojo);
-        writeAsFile("lefts", lefts.toString());
         Set<String> rights = getDummyProfileFromPojo(clazz);
-        writeAsFile("rights", rights.toString());
         Set<String> diff = entriesOnlyOnLeft(lefts, rights);
-        writeAsFile("diff", diff.toString());
         List<ConfigResult> results = new ArrayList<>();
         for (String invalidKey : diff) {
             ConfigResult result = new ConfigResult(KEY_VALIDATION_FAILED);
@@ -183,7 +174,7 @@ public class ProfileValidator {
     }
 
     @NonNull
-    private <T> Set<String> getUserProfile(T pojo) throws FileNotFoundException{
+    private <T> Set<String> getUserProfile(T pojo) throws FileNotFoundException {
         Map<String, Object> userProfileMap;
 
         if(pojo instanceof File) {
@@ -193,14 +184,14 @@ public class ProfileValidator {
             String userProfileStr = gson.toJson(pojo);
             userProfileMap = gson.fromJson(userProfileStr, serializationType);
         }
-        return FlatMapUtil2.flatten(userProfileMap);
+        return FlatMapUtil.flatten(userProfileMap);
     }
 
 
     private <T> Set<String> getDummyProfileFromPojo(Class<T> clazz) {
         String dummyProfileAsJson = getDummyProfileJson(clazz);
         Map<String, Object> dummyProfileAsMap = gson.fromJson(dummyProfileAsJson, serializationType);
-        return FlatMapUtil2.flatten(dummyProfileAsMap);
+        return FlatMapUtil.flatten(dummyProfileAsMap);
     }
 
     private <T> String getDummyProfileJson(Class<T> clazz) {
@@ -210,7 +201,6 @@ public class ProfileValidator {
         //factory.getStrategy().setMemoization(false);
         T myPojo = factory.manufacturePojo(clazz);
         String json = gson.toJson(myPojo);
-        //writeAsFile(json);
         return json;
     }
 
@@ -327,7 +317,7 @@ public class ProfileValidator {
             //factory.getStrategy().setMemoization(false);
             T myPojo = factory.manufacturePojo(clazz);
             result = ValueNodeInfoUtil.getPatternInfo(myPojo);
-            writeAsFile("reg", gson.toJson(result));
+            writeAsFile("reg_exp", gson.toJson(result));
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         } catch (Exception e) {

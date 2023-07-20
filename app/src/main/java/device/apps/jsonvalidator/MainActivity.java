@@ -30,13 +30,13 @@ public class MainActivity extends AppCompatActivity {
 
                 ProfileValidator validator = ProfileValidator.getInstance();
                 validator.setIsLogging(true);
-                validator.validateContainerNode(json, Scan2StageEntity.class);
+                //validator.validateContainerNode(json, Scan2StageEntity.class);
 
                 //validate value node
                 //validator.validateValueNode(json, Scan2StageEntity.class);
 
                 //create constraints
-                //validator.findConstraints(Scan2StageEntity.class);
+                validator.findConstraints(Scan2StageEntity.class);
             } catch (Exception e) {
                 e.printStackTrace();
             }

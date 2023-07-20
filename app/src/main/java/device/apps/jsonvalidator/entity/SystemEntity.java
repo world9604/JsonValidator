@@ -41,7 +41,7 @@ public class SystemEntity {
     private String volume_ring;
 
     @PodamStringValue
-    @Pattern(regexp = "^(Keep Current Option|[1-15])$", message = "allowed_key_list_msg::Keep Current Option|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15")
+    @Pattern(regexp = "^(Keep Current Option|[1-9]|1[0-5])$", message = "allowed_key_list_msg::Keep Current Option|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15")
     @Expose
     @SerializedName(Util.KEY_SET_VOLUME_MUSIC)
     private String volume_music;
@@ -71,7 +71,7 @@ public class SystemEntity {
     private String volume_ring_min;
 
     @PodamStringValue
-    @Pattern(regexp = "^(Keep Current Option|[1-15])$", message = "allowed_key_list_msg::Keep Current Option|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15")
+    @Pattern(regexp = "^(Keep Current Option|[1-9]|1[0-5])$", message = "allowed_key_list_msg::Keep Current Option|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15")
     @Expose
     @SerializedName(Util.KEY_SET_VOLUME_MUSIC_MIN)
     private String volume_music_min;
