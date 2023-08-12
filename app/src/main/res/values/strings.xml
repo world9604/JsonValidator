@@ -1,4 +1,5 @@
 <resources>
-    <string name="app_name">JsonSchemaValidator</string>
+    <string name="app_name">JsonSchemaValidator_EmInstaller_Master</string>
+    <string name="app_name_amazon">JsonSchemaValidator_EmInstaller_Amazon</string>
     <string name="allowed_key_list_msg">[%s]</string>
 </resources>

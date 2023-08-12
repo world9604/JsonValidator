@@ -1,18 +1,15 @@
-package device.apps.jsonvalidator.entity.eminstall;
+package device.apps.jsonvalidator.entity;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-import javax.validation.constraints.Pattern;
+public class JobEntity implements Comparable<JobEntity> {
+    @Expose
+    @SerializedName("sequenceNum")
+    private int sequenceNum = -1;
 
-import uk.co.jemos.podam.common.PodamCollection;
-import uk.co.jemos.podam.common.PodamStringValue;
-
-public class JobEntity {
-    @PodamStringValue
-    @Pattern(regexp = "^(APPLY_SETTING|RESTORE_DIRECT_CLONE|APPLY_EMKIOSK|APPLY_WEDGE_PROFILE|APPLY_RING_WEDGE|APPLY_RING_CONTROL)$", message = "allowed_key_list_msg::APPLY_SETTING|RESTORE_DIRECT_CLONE|APPLY_EMKIOSK|APPLY_WEDGE_PROFILE|APPLY_RING_WEDGE|APPLY_RING_CONTROL")
     @Expose
     @SerializedName("jobType")
     private String jobType;
@@ -57,7 +54,6 @@ public class JobEntity {
     @SerializedName("delayTime")
     private String delayTime;
 
-    //@PodamCollection(nbrElements = 3)
     @Expose
     @SerializedName("extraStr")
     private ArrayList<String> extraStr;
@@ -98,30 +94,14 @@ public class JobEntity {
     @SerializedName("extraFloatArr")
     private ArrayList<String> extraFloatArr;
 
-    public JobEntity(String jobType, String downloadUrl, String fileName, String filePath, String actionName, String actionType, ArrayList<String> category, ArrayList<String> flags, String packageName, String className, String delayTime, ArrayList<String> extraStr, ArrayList<String> extraInt, ArrayList<String> extraBoolean, ArrayList<String> extraLong, ArrayList<String> extraFloat, ArrayList<String> extraStrArr, ArrayList<String> extraIntArr, ArrayList<String> extraBooleanArr, ArrayList<String> extraLongArr, ArrayList<String> extraFloatArr) {
-        this.jobType = jobType;
-        this.downloadUrl = downloadUrl;
-        this.fileName = fileName;
-        this.filePath = filePath;
-        this.actionName = actionName;
-        this.actionType = actionType;
-        this.category = category;
-        this.flags = flags;
-        this.packageName = packageName;
-        this.className = className;
-        this.delayTime = delayTime;
-        this.extraStr = extraStr;
-        this.extraInt = extraInt;
-        this.extraBoolean = extraBoolean;
-        this.extraLong = extraLong;
-        this.extraFloat = extraFloat;
-        this.extraStrArr = extraStrArr;
-        this.extraIntArr = extraIntArr;
-        this.extraBooleanArr = extraBooleanArr;
-        this.extraLongArr = extraLongArr;
-        this.extraFloatArr = extraFloatArr;
+
+    public int getSequenceNum() {
+        return sequenceNum;
     }
 
+    public void setSequenceNum(int sequenceNum) {
+        this.sequenceNum = sequenceNum;
+    }
 
     public String getJobType() {
         return jobType;
@@ -290,5 +270,16 @@ public class JobEntity {
 
     public void setDelayTime(String delayTime) {
         this.delayTime = delayTime;
+    }
+
+    @Override
+    public int compareTo(JobEntity jobEntity) {
+        // Ascending
+        if (this.sequenceNum > jobEntity.getSequenceNum()) {
+            return 1;
+        } else if (this.sequenceNum < jobEntity.getSequenceNum()) {
+            return -1;
+        }
+        return 0;
     }
 }

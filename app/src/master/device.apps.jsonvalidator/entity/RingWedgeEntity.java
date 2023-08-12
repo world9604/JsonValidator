@@ -1,4 +1,4 @@
-package device.apps.jsonvalidator.entity.eminstall;
+package device.apps.jsonvalidator.entity;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -48,26 +48,6 @@ class RingWedge
     @SerializedName("result_type")
     private int result_type;
 
-    @Expose
-    @SerializedName("intent_action")
-    private String intent_action;
-
-    @Expose
-    @SerializedName("intent_category")
-    private String intent_category;
-
-    @Expose
-    @SerializedName("intent_extra_decode_value")
-    private String intent_extra_decode_value;
-
-    @Expose
-    @SerializedName("intent_extra_decode_byte_value")
-    private String intent_extra_decode_byte_value;
-
-    @Expose
-    @SerializedName("intent_extra_event_source")
-    private String intent_extra_event_source;
-
     public String getAdmin_password() {
         return admin_password;
     }
@@ -90,46 +70,6 @@ class RingWedge
 
     public void setResult_type(int result_type) {
         this.result_type = result_type;
-    }
-
-    public String getIntent_action() {
-        return intent_action;
-    }
-
-    public void setIntent_action(String intent_action) {
-        this.intent_action = intent_action;
-    }
-
-    public String getIntent_category() {
-        return intent_category;
-    }
-
-    public void setIntent_category(String intent_category) {
-        this.intent_category = intent_category;
-    }
-
-    public String getIntent_extra_decode_value() {
-        return intent_extra_decode_value;
-    }
-
-    public void setIntent_extra_decode_value(String intent_extra_decode_value) {
-        this.intent_extra_decode_value = intent_extra_decode_value;
-    }
-
-    public String getIntent_extra_decode_byte_value() {
-        return intent_extra_decode_byte_value;
-    }
-
-    public void setIntent_extra_decode_byte_value(String intent_extra_decode_byte_value) {
-        this.intent_extra_decode_byte_value = intent_extra_decode_byte_value;
-    }
-
-    public String getIntent_extra_event_source() {
-        return intent_extra_event_source;
-    }
-
-    public void setIntent_extra_event_source(String intent_extra_event_source) {
-        this.intent_extra_event_source = intent_extra_event_source;
     }
 }
 

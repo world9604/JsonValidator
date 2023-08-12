@@ -1,4 +1,4 @@
-package device.apps.jsonvalidator.entity.eminstall;
+package device.apps.jsonvalidator.entity;
 
 public class RingControlEntity
 {

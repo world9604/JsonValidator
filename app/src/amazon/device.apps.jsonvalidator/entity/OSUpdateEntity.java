@@ -1,4 +1,4 @@
-package device.apps.jsonvalidator.entity.eminstall;
+package device.apps.jsonvalidator.entity;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

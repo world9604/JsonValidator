@@ -5,17 +5,6 @@ import com.google.gson.annotations.SerializedName;
 
 import javax.validation.Valid;
 
-import device.apps.jsonvalidator.entity.eminstall.DirectCloneEntity;
-import device.apps.jsonvalidator.entity.eminstall.EmBatteryMonitorEntity;
-import device.apps.jsonvalidator.entity.eminstall.GmsPackageEntity;
-import device.apps.jsonvalidator.entity.eminstall.JobListEntity;
-import device.apps.jsonvalidator.entity.eminstall.OSUpdateEntity;
-import device.apps.jsonvalidator.entity.eminstall.PowerLauncherEntity;
-import device.apps.jsonvalidator.entity.eminstall.RingControlEntity;
-import device.apps.jsonvalidator.entity.eminstall.RingWedgeEntity;
-import device.apps.jsonvalidator.entity.eminstall.ScheduleEntity;
-import device.apps.jsonvalidator.entity.eminstall.WedgeProfileEntity;
-
 public class Scan2StageEntity {
     @Valid
     @Expose

@@ -3,7 +3,6 @@ plugins {
 }
 
 ext {
-    home = System.getenv('HOME')
     keyStore = "E:\\develop\\pmapps-master\\keystore"
 }
 
@@ -60,16 +59,46 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    flavorDimensions "version"
+    productFlavors {
+        /**
+         * master : EmInstaller master 브랜치
+         * amazon : EmInstaller amazon 브랜치
+         */
+        master {
+            dimension "version"
+            manifestPlaceholders = [ appLabel: "@string/app_name" ]
+            applicationIdSuffix ".master"
+        }
+        amazon {
+            dimension "version"
+            manifestPlaceholders = [ appLabel: "@string/app_name_amazon" ]
+            applicationIdSuffix ".amazon"
+        }
+    }
+
+    sourceSets {
+        master {
+            java.srcDirs = ['src/main', 'src/master']
+        }
+        amazon {
+            java.srcDirs = ['src/main', 'src/amazon']
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.pointmobileconfig
+            //signingConfig signingConfigs.pointmobileconfig
+            signingConfig signingConfigs.androidConfig
         }
         debug{
-            signingConfig signingConfigs.pointmobileconfig
+            //signingConfig signingConfigs.pointmobileconfig
+            signingConfig signingConfigs.androidConfig
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
